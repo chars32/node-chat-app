@@ -59,8 +59,4 @@ typings/
 .env
 
 
-.idea/misc.xml
-.idea/modules.xml
-.idea/node-chat-app.iml
-.idea/workspace.xml
-package.json
+.idea/**
