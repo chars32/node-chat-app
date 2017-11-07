@@ -28,13 +28,21 @@ io.on('connection', (socket) => {
   //   createAt: (new Date()).toJSON()
   // });
 
-  socket.on('disconnect', () => {
-    console.log('Disconnected from the client.');
-  });
-
   // socket.on('createEmail', (newEmail) => {
   //   console.log('createEmail', newEmail);
   // });
+
+  socket.emit('newMessage', {
+    from: 'admin',
+    text: 'Welcome to the Node Chat App',
+    createdAt: new Date().getTime()
+  });
+
+  socket.broadcast.emit('newMessage', {
+    from: 'admin',
+    text: 'New user joined.',
+    createdAt: new Date().getTime()
+  });
 
   socket.on('createMessage', (newMessage) => {
     console.log('createMessage', newMessage);
@@ -43,6 +51,10 @@ io.on('connection', (socket) => {
       text: newMessage.text,
       createdAt: new Date().getTime()
     });
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Disconnected from the client.');
   });
 
 });
