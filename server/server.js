@@ -1,5 +1,6 @@
 const express = require('express');
 const http = require('http');
+const {generateMessage} = require('./utils/message');
 const path = require('path');
 const socketIO = require('socket.io');
 
@@ -16,41 +17,14 @@ io.on('connection', (socket) => {
 
   console.log('New user connected.');
 
-  // socket.emit('newEmail', {
-  //   from: 'mike@example.com',
-  //   text: 'Hello.',
-  //   createAt: 123
-  // });
+  socket.emit('newMessage', generateMessage('admin', 'Welcome to the Node Chat App'));
 
-  // socket.emit('newMessage', {
-  //   from: 'wade@example.com',
-  //   text: 'Hello there.',
-  //   createAt: (new Date()).toJSON()
-  // });
+  socket.broadcast.emit('newMessage', generateMessage('admin', 'New user joined'));
 
-  // socket.on('createEmail', (newEmail) => {
-  //   console.log('createEmail', newEmail);
-  // });
-
-  socket.emit('newMessage', {
-    from: 'admin',
-    text: 'Welcome to the Node Chat App',
-    createdAt: new Date().getTime()
-  });
-
-  socket.broadcast.emit('newMessage', {
-    from: 'admin',
-    text: 'New user joined.',
-    createdAt: new Date().getTime()
-  });
-
-  socket.on('createMessage', (newMessage) => {
-    console.log('createMessage', newMessage);
-    io.emit('newMessage', {
-      from: newMessage.from,
-      text: newMessage.text,
-      createdAt: new Date().getTime()
-    });
+  socket.on('createMessage', (message, callback) => {
+    console.log('createMessage', message);
+    io.emit('newMessage', generateMessage(message.from, message.text));
+    callback('This is from the server');
   });
 
   socket.on('disconnect', () => {
