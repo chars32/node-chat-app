@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 [{
   id: '/#12poiaflkskfge',
   name: 'Andrew',
@@ -14,6 +16,20 @@ class Users {
     var user = {id, name, room};
     this.users.push(user);
     return user;
+  }
+
+  removeUser(id) {
+    return _.remove(this.users, (x) => x.id === id)[0];
+  }
+
+  getUser(id) {
+    return this.users.filter((user) => user.id === id)[0];
+  }
+
+  getUserList(room) {
+    var users = this.users.filter((user) => user.room === room);
+    var namesArr = users.map((user) => user.name);
+    return namesArr;
   }
 
 }
