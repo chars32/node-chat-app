@@ -25,15 +25,22 @@ io.on('connection', (socket) => {
     if (!isRealString(params.name) || !isRealString(params.room)) {
       return callback('Name and room are required.');
     }
-    console.log(users.users);
     params.room = params.room.toLowerCase();
     socket.join(params.room);
-    users.removeUser(socket.id);
-    users.addUser(socket.id, params.name, params.room);
-    io.to(params.room).emit('updateUserList', users.getUserList(params.room));
-    socket.emit('newMessage', generateMessage('admin', 'Welcome to the Node Chat App'));
-    socket.broadcast.to(params.room).emit('newMessage', generateMessage('admin', `${params.name} has joined.`));
-    callback();
+    // Check to see if the user already exists in the list of logged in users.
+    const userExists = users.users.findIndex((user) => user.name === params.name);
+    if (userExists < 0) {
+      users.removeUser(socket.id);
+      users.addUser(socket.id, params.name, params.room);
+      io.to(params.room).emit('updateUserList', users.getUserList(params.room));
+      socket.emit('newMessage', generateMessage('admin', 'Welcome to the Node Chat App'));
+      socket.broadcast.to(params.room).emit('newMessage', generateMessage('admin', `${params.name} has joined.`));
+      callback();
+    }
+    else {
+      return callback(`The name, ${params.name} is already used. Please use another display name.`);
+    }
+
   });
 
   socket.on('createMessage', (message, callback) => {
