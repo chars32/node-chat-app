@@ -18,6 +18,7 @@ function scrollToBottom () {
 
 socket.on('connect', function() {
   var params = jQuery.deparam(window.location.search);
+  console.log('Params from chat.js', params);
   socket.emit('join', params, function(err) {
     if (err) {
       alert(err);
